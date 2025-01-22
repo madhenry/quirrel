@@ -37,6 +37,7 @@ export interface QuirrelWorkerConfig {
   webhookSigningPrivateKey?: string;
   enableSSRFPrevention?: boolean;
   postHogApiKey?: string;
+  customHeaders?: Record<string, string>
 }
 
 export async function createWorker({
@@ -50,6 +51,7 @@ export async function createWorker({
   webhookSigningPrivateKey,
   enableSSRFPrevention,
   postHogApiKey,
+  customHeaders = {}
 }: QuirrelWorkerConfig) {
   const redisClient = redisFactory();
   const telemetrist = disableTelemetry
@@ -99,6 +101,7 @@ export async function createWorker({
         retry: job.retry,
         nextRepetition: ack.nextExecutionDate,
       }),
+      ...customHeaders,
     };
 
     if (tokenId) {
