@@ -3,6 +3,17 @@ import { runQuirrel } from ".";
 import { cliWithConfig } from "../shared/cliWithConfig";
 import { createRedisFactory } from "./shared/create-redis";
 
+const parseHeadersFromString = (headers) => {
+  if (!headers) {
+    return {};
+  }
+  return headers.split(",").reduce((acc, header) => {
+    const [key, value] = header.split("=");
+    acc[key.trim()] = value.trim();
+    return acc;
+  }, {});
+};
+
 cliWithConfig(async (config) => {
   const {
     PORT = 9181,
@@ -18,7 +29,10 @@ cliWithConfig(async (config) => {
     ENABLE_SSRF_PREVENTION,
     JWT_PUBLIC_KEY,
     POSTHOG_API_KEY,
+    CUSTOM_HEADERS,
   } = config;
+
+  
 
   const quirrel = await runQuirrel({
     port: +PORT,
@@ -42,6 +56,7 @@ cliWithConfig(async (config) => {
           passphrase: INCIDENT_RECEIVER_PASSPHRASE!,
         }
       : undefined,
+    customHeaders: parseHeadersFromString(CUSTOM_HEADERS),
   });
 
   return {
