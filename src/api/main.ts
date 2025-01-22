@@ -3,7 +3,7 @@ import { runQuirrel } from ".";
 import { cliWithConfig } from "../shared/cliWithConfig";
 import { createRedisFactory } from "./shared/create-redis";
 
-const parseHeadersFromString = (headers) => {
+const parseHeadersFromString = (headers: string) => {
   if (!headers) {
     return {};
   }
@@ -11,7 +11,7 @@ const parseHeadersFromString = (headers) => {
     const [key, value] = header.split("=");
     acc[key.trim()] = value.trim();
     return acc;
-  }, {});
+  }, {} as Record<string, string>);
 };
 
 cliWithConfig(async (config) => {
@@ -56,7 +56,7 @@ cliWithConfig(async (config) => {
           passphrase: INCIDENT_RECEIVER_PASSPHRASE!,
         }
       : undefined,
-    customHeaders: parseHeadersFromString(CUSTOM_HEADERS),
+    customHeaders: parseHeadersFromString(CUSTOM_HEADERS ?? ""),
   });
 
   return {
